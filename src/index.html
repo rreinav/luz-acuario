@@ -1,13 +1,92 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-	<meta charset="utf-8"/>
-	<title>Luz Acuario - Control de Pantalla LED RGB</title>
-	<link rel="stylesheet" href="./css/styles.css"/>
-</head>
-<body>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es" lang="es">
 
-<div id="app"></div>
-<script type="module" src="./js/controller.mjs"></script>
+<head>
+	<title>Arduino acuario</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<meta name="keywords" content="arduino, acuario" />
+	<meta name="author" content="Rafael Reina Viruel" />
+	<link rel="stylesheet" type="text/css" href="css/index.css" />
+	<script type="text/javascript">
+		var temperatura = 0;
+		var temp = 0;
+		var hora = 10;
+		function creaMatriz(){
+			minuto = minuto + 10;
+			if (minuto == 60){
+				hora = hora + 1;
+				minuto = 0;
+			}
+			if (hora <= 14)
+				temperatura = temp + 50;
+			else {
+				temperatura = temp - 50;
+				if (temperatura <= 0)
+					hora = 10;
+			}
+			document.getElementById("tiempo").innerHTML = hora + ":" + minuto;
+			document.getElementById("temperatura").innerHTML = temperatura + "ºk";
+			temperaturaRGB(temperatura);
+		}
+		function temperaturaRGB(temp){
+			temp = temp / 100;
+			var rojo = 0, verde = 0, azul = 0;
+			if (temp <= 66){
+				rojo = 255;
+				verde = temp;
+				verde = 99.4708025861 * Math.log(verde) - 161.1195681661;
+				if (verde < 0)
+					verde = 0;
+				else if (verde > 255)
+					verde = 255;
+			}
+			else{
+				rojo = temp - 60;
+				rojo = 329.698727446 * Math.pow(rojo, -0.1332047592);
+				if (rojo < 0 )
+					rojo = 0;
+				else if (rojo > 255)
+					rojo = 255;
+				verde = temp - 60;
+				verde = 288.1221695283 * Math.log(verde, -0.0755148492);
+				if (verde < 0)
+					verde = 0;
+				else if (verde > 255)
+					verde = 255;
+			}
+			if (temp >= 66)
+				azul = 255;
+			else if (temp <= 19)
+				azul = 0;
+			else{
+				azul = temp - 10;
+				azul = 138.5177312231 * Math.log(azul) - 305.0447927307;
+				if (azul < 0)
+					azul = 0;
+				else if (azul > 255)
+					azul = 255;
+			}
+			rojo = Math.round(rojo);
+			verde = Math.round(verde);
+			azul = Math.round(azul);
+			var a = 2 * (temp/100);
+			if (a > 1)
+				a = 1;
+			a = a.toFixed(1);
+			document.getElementById("rgb").innerHTML = "r="+rojo+", g="+verde+" b="+azul+", i="+a;
+			document.getElementById("acuario").style.background = "linear-gradient(rgba("+rojo+","+verde+","+azul+",1),rgba("+rojo+","+verde+","+azul+","+a+"))";
+		}
+	</script>
+</head>
+
+<body onload="creaMatriz()">
+	<div id="acuario">
+	</div>
+	<div id="parametros">
+		<p id="tiempo">0</p>
+		<p id="temperatura">0ºk</p>
+		<p id="rgb">r=0, g=0, b=0</p>
+	</div>
 </body>
+
 </html>
