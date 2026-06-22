@@ -23,6 +23,12 @@ src/
   css/index.css   ← estilos
 ```
 
+## Ciclo de luz
+- **Modo reducido (defecto)**: ciclo 12:00→20:00, temp=pico 6500K a las 16:00, 0K al inicio/fin.
+- **Modo 24h**: ciclo completo 0:00→23:50, la luz visible solo entre 12-20, temp=0 fuera de ese rango.
+- Switch checkbox `#modo24h` en `#parametros` para alternar.
+- Avanza en saltos de 10 minutos cada 1 segundo (`setInterval`).
+
 ## Notas
 - El JS está inline en `index.html`, no hay archivos `.mjs` funcionales.
 - `pnpm-lock.yaml` versionado, `node_modules/` ignorado.

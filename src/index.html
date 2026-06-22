@@ -8,70 +8,80 @@
 	<meta name="author" content="Rafael Reina Viruel" />
 	<link rel="stylesheet" type="text/css" href="css/index.css" />
 	<script type="text/javascript">
-		var temperatura = 0;
-		var temp = 0;
-		var hora = 10;
+		var minuto = 0, hora = 12, temp = 0, modo24h = false;
+		var rojo = 0, verde = 0, azul = 0, a = 0;
+
+		function mostrarInfo() {
+			var m = minuto < 10 ? "0" + minuto : "" + minuto;
+			document.getElementById("tiempo").innerHTML = hora + ":" + m;
+			document.getElementById("temperatura").innerHTML = temp + "K";
+		}
+
+		function setModo() {
+			modo24h = document.getElementById("modo24h").checked;
+			hora = modo24h ? 0 : 12;
+			minuto = 0;
+			calcTemp();
+			mostrarInfo();
+			temperaturaRGB(temp);
+		}
+
+		function calcTemp() {
+			if (hora >= 12 && hora < 20)
+				temp = Math.round(6500 * Math.sin((hora - 12) * Math.PI / 8));
+			else
+				temp = 0;
+		}
+
 		function creaMatriz(){
-			minuto = minuto + 10;
-			if (minuto == 60){
-				hora = hora + 1;
+			minuto += 10;
+			if (minuto >= 60){
+				hora++;
 				minuto = 0;
 			}
-			if (hora <= 14)
-				temperatura = temp + 50;
-			else {
-				temperatura = temp - 50;
-				if (temperatura <= 0)
-					hora = 10;
-			}
-			document.getElementById("tiempo").innerHTML = hora + ":" + minuto;
-			document.getElementById("temperatura").innerHTML = temperatura + "ºk";
-			temperaturaRGB(temperatura);
+			if (modo24h && hora >= 24)
+				hora = 0;
+			else if (!modo24h && hora >= 20)
+				hora = 12;
+			calcTemp();
+			mostrarInfo();
+			temperaturaRGB(temp);
 		}
-		function temperaturaRGB(temp){
-			temp = temp / 100;
-			var rojo = 0, verde = 0, azul = 0;
-			if (temp <= 66){
+
+		function temperaturaRGB(t){
+			t = t / 100;
+			rojo = 0; verde = 0; azul = 0;
+			if (t <= 66){
 				rojo = 255;
-				verde = temp;
+				verde = t;
 				verde = 99.4708025861 * Math.log(verde) - 161.1195681661;
-				if (verde < 0)
-					verde = 0;
-				else if (verde > 255)
-					verde = 255;
-			}
-			else{
-				rojo = temp - 60;
+				if (verde < 0) verde = 0;
+				else if (verde > 255) verde = 255;
+			} else {
+				rojo = t - 60;
 				rojo = 329.698727446 * Math.pow(rojo, -0.1332047592);
-				if (rojo < 0 )
-					rojo = 0;
-				else if (rojo > 255)
-					rojo = 255;
-				verde = temp - 60;
-				verde = 288.1221695283 * Math.log(verde, -0.0755148492);
-				if (verde < 0)
-					verde = 0;
-				else if (verde > 255)
-					verde = 255;
+				if (rojo < 0) rojo = 0;
+				else if (rojo > 255) rojo = 255;
+				verde = t - 60;
+				verde = 288.1221695283 * Math.log(verde);
+				if (verde < 0) verde = 0;
+				else if (verde > 255) verde = 255;
 			}
-			if (temp >= 66)
+			if (t >= 66)
 				azul = 255;
-			else if (temp <= 19)
+			else if (t <= 19)
 				azul = 0;
 			else{
-				azul = temp - 10;
+				azul = t - 10;
 				azul = 138.5177312231 * Math.log(azul) - 305.0447927307;
-				if (azul < 0)
-					azul = 0;
-				else if (azul > 255)
-					azul = 255;
+				if (azul < 0) azul = 0;
+				else if (azul > 255) azul = 255;
 			}
 			rojo = Math.round(rojo);
 			verde = Math.round(verde);
 			azul = Math.round(azul);
-			var a = 2 * (temp/100);
-			if (a > 1)
-				a = 1;
+			a = 2 * (t/100);
+			if (a > 1) a = 1;
 			a = a.toFixed(1);
 			document.getElementById("rgb").innerHTML = "r="+rojo+", g="+verde+" b="+azul+", i="+a;
 			document.getElementById("acuario").style.background = "linear-gradient(rgba("+rojo+","+verde+","+azul+",1),rgba("+rojo+","+verde+","+azul+","+a+"))";
@@ -79,13 +89,14 @@
 	</script>
 </head>
 
-<body onload="creaMatriz()">
+<body onload="mostrarInfo(); temperaturaRGB(0); setInterval(creaMatriz, 1000)">
 	<div id="acuario">
 	</div>
 	<div id="parametros">
-		<p id="tiempo">0</p>
-		<p id="temperatura">0ºk</p>
-		<p id="rgb">r=0, g=0, b=0</p>
+		<p id="tiempo">12:00</p>
+		<p id="temperatura">0K</p>
+		<p id="rgb">r=0, g=0, b=0, i=0.0</p>
+		<p><label><input type="checkbox" id="modo24h" onchange="setModo()"> Ciclo 24h completo</label></p>
 	</div>
 </body>
 
