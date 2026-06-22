@@ -26,8 +26,9 @@ src/
 ## Ciclo de luz
 - **Modo reducido (defecto)**: ciclo 12:00→20:00, temp=pico 6500K a las 16:00, 0K al inicio/fin.
 - **Modo 24h**: ciclo completo 0:00→23:50, la luz visible solo entre 12-20, temp=0 fuera de ese rango.
-- Switch checkbox `#modo24h` en `#parametros` para alternar.
+- Switch checkbox `#modo24h` en `#parametros` para alternar. Por defecto activado (24h).
 - Avanza en saltos de 10 minutos cada 1 segundo (`setInterval`).
+- `brillo` sigue curva senoidal 0→1→0 entre 12-20, usado como alpha del gradiente.
 
 ## Notas
 - El JS está inline en `index.html`, no hay archivos `.mjs` funcionales.

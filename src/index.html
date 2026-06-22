@@ -2,102 +2,104 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es" lang="es">
 
 <head>
-	<title>Arduino acuario</title>
-	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
-	<meta name="keywords" content="arduino, acuario" />
-	<meta name="author" content="Rafael Reina Viruel" />
-	<link rel="stylesheet" type="text/css" href="css/index.css" />
-	<script type="text/javascript">
-		var minuto = 0, hora = 12, temp = 0, modo24h = false;
-		var rojo = 0, verde = 0, azul = 0, a = 0;
+  <title>Arduino acuario</title>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+  <meta name="keywords" content="arduino, acuario" />
+  <meta name="author" content="Rafael Reina Viruel" />
+  <link rel="stylesheet" type="text/css" href="css/index.css" />
+  <script type="text/javascript">
+		var minuto = 0, hora = 0, temp = 0, modo24h = true, brillo = 0;
+		var rojo = 0, verde = 0, azul = 0;
 
-		function mostrarInfo() {
-			var m = minuto < 10 ? "0" + minuto : "" + minuto;
-			document.getElementById("tiempo").innerHTML = hora + ":" + m;
-			document.getElementById("temperatura").innerHTML = temp + "K";
-		}
+    function mostrarInfo() {
+      var m = minuto < 10 ? "0" + minuto : "" + minuto;
+      document.getElementById("tiempo").innerHTML = hora + ":" + m;
+      document.getElementById("temperatura").innerHTML = temp + "K";
+    }
 
-		function setModo() {
-			modo24h = document.getElementById("modo24h").checked;
-			hora = modo24h ? 0 : 12;
-			minuto = 0;
-			calcTemp();
-			mostrarInfo();
-			temperaturaRGB(temp);
-		}
+    function setModo() {
+      modo24h = document.getElementById("modo24h").checked;
+      hora = modo24h ? 0 : 12;
+      minuto = 0;
+      calcTemp();
+      mostrarInfo();
+      temperaturaRGB(temp);
+    }
 
 		function calcTemp() {
-			if (hora >= 12 && hora < 20)
-				temp = Math.round(6500 * Math.sin((hora - 12) * Math.PI / 8));
-			else
-				temp = 0;
-		}
-
-		function creaMatriz(){
-			minuto += 10;
-			if (minuto >= 60){
-				hora++;
-				minuto = 0;
-			}
-			if (modo24h && hora >= 24)
-				hora = 0;
-			else if (!modo24h && hora >= 20)
-				hora = 12;
-			calcTemp();
-			mostrarInfo();
-			temperaturaRGB(temp);
-		}
-
-		function temperaturaRGB(t){
-			t = t / 100;
-			rojo = 0; verde = 0; azul = 0;
-			if (t <= 66){
-				rojo = 255;
-				verde = t;
-				verde = 99.4708025861 * Math.log(verde) - 161.1195681661;
-				if (verde < 0) verde = 0;
-				else if (verde > 255) verde = 255;
+			var hDec = hora + minuto / 60;
+			if (hDec >= 12 && hDec < 20) {
+				var factor = Math.sin((hDec - 12) * Math.PI / 8);
+				temp = Math.round(6500 * factor);
+				brillo = Math.round(factor * 10) / 10;
 			} else {
-				rojo = t - 60;
-				rojo = 329.698727446 * Math.pow(rojo, -0.1332047592);
-				if (rojo < 0) rojo = 0;
-				else if (rojo > 255) rojo = 255;
-				verde = t - 60;
-				verde = 288.1221695283 * Math.log(verde);
-				if (verde < 0) verde = 0;
-				else if (verde > 255) verde = 255;
+				temp = 0;
+				brillo = 0;
 			}
-			if (t >= 66)
-				azul = 255;
-			else if (t <= 19)
-				azul = 0;
-			else{
-				azul = t - 10;
-				azul = 138.5177312231 * Math.log(azul) - 305.0447927307;
-				if (azul < 0) azul = 0;
-				else if (azul > 255) azul = 255;
-			}
-			rojo = Math.round(rojo);
-			verde = Math.round(verde);
-			azul = Math.round(azul);
-			a = 2 * (t/100);
-			if (a > 1) a = 1;
-			a = a.toFixed(1);
-			document.getElementById("rgb").innerHTML = "r="+rojo+", g="+verde+" b="+azul+", i="+a;
-			document.getElementById("acuario").style.background = "linear-gradient(rgba("+rojo+","+verde+","+azul+",1),rgba("+rojo+","+verde+","+azul+","+a+"))";
 		}
-	</script>
+
+    function creaMatriz() {
+      minuto += 10;
+      if (minuto >= 60) {
+        hora++;
+        minuto = 0;
+      }
+      if (modo24h && hora >= 24)
+        hora = 0;
+      else if (!modo24h && hora >= 20)
+        hora = 12;
+      calcTemp();
+      mostrarInfo();
+      temperaturaRGB(temp);
+    }
+
+    function temperaturaRGB(t) {
+      t = t / 100;
+      rojo = 0; verde = 0; azul = 0;
+      if (t <= 66) {
+        rojo = 255;
+        verde = t;
+        verde = 99.4708025861 * Math.log(verde) - 161.1195681661;
+        if (verde < 0) verde = 0;
+        else if (verde > 255) verde = 255;
+      } else {
+        rojo = t - 60;
+        rojo = 329.698727446 * Math.pow(rojo, -0.1332047592);
+        if (rojo < 0) rojo = 0;
+        else if (rojo > 255) rojo = 255;
+        verde = t - 60;
+        verde = 288.1221695283 * Math.log(verde);
+        if (verde < 0) verde = 0;
+        else if (verde > 255) verde = 255;
+      }
+      if (t >= 66)
+        azul = 255;
+      else if (t <= 19)
+        azul = 0;
+      else {
+        azul = t - 10;
+        azul = 138.5177312231 * Math.log(azul) - 305.0447927307;
+        if (azul < 0) azul = 0;
+        else if (azul > 255) azul = 255;
+      }
+      rojo = Math.round(rojo);
+      verde = Math.round(verde);
+      azul = Math.round(azul);
+			document.getElementById("rgb").innerHTML = "r=" + rojo + ", g=" + verde + " b=" + azul + ", i=" + brillo.toFixed(1);
+			document.getElementById("acuario").style.background = "linear-gradient(rgba(" + rojo + "," + verde + "," + azul + ",1),rgba(" + rojo + "," + verde + "," + azul + "," + brillo.toFixed(1) + "))";
+    }
+  </script>
 </head>
 
-<body onload="mostrarInfo(); temperaturaRGB(0); setInterval(creaMatriz, 1000)">
-	<div id="acuario">
-	</div>
-	<div id="parametros">
-		<p id="tiempo">12:00</p>
+<body onload="setModo(); setInterval(creaMatriz, 1000)">
+  <div id="acuario">
+  </div>
+  <div id="parametros">
+		<p id="tiempo">0:00</p>
 		<p id="temperatura">0K</p>
 		<p id="rgb">r=0, g=0, b=0, i=0.0</p>
-		<p><label><input type="checkbox" id="modo24h" onchange="setModo()"> Ciclo 24h completo</label></p>
-	</div>
+		<p><label><input type="checkbox" id="modo24h" checked onchange="setModo()"> Ciclo 24h completo</label></p>
+  </div>
 </body>
 
 </html>
