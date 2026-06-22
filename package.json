@@ -2,26 +2,28 @@
   "name": "luz-acuario",
   "version": "1.0.0",
   "description": "Proyecto para desarrollar el funcionamiento de una pantalla LED de 3 canales en un acuario segun la hora del día",
+  "keywords": [],
+  "license": "MIT",
+  "author": "rreinav",
+  "type": "module",
   "main": "index.html",
   "scripts": {
     "dev": "servor src --reload",
     "lint": "oxlint src/",
-    "format": "oxfmt src/"
+    "format": "oxfmt src/",
+    "deploy": "gh-pages -d src/"
   },
-  "keywords": [],
-  "author": "rreinav",
-  "license": "MIT",
+  "devDependencies": {
+    "gh-pages": "^6.3.0",
+    "oxfmt": "^0.55.0",
+    "oxlint": "^1.70.0",
+    "servor": "^4.0.2"
+  },
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
       "version": "^11.5.0",
       "onFail": "download"
     }
-  },
-  "type": "module",
-  "devDependencies": {
-    "oxfmt": "^0.55.0",
-    "oxlint": "^1.70.0",
-    "servor": "^4.0.2"
   }
 }
