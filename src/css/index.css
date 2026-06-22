@@ -62,7 +62,7 @@ canvas#grafica {
   max-width: 1660px;
   display: flex;
   align-items: center;
-  gap: 2em;
+  justify-content: space-between;
   flex-wrap: wrap;
 }
 
