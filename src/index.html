@@ -173,10 +173,10 @@
         ctx.stroke();
       }
 
-      curva(function(p) { return p.r / 255 * 100; }, '#ff6b4a');
-      curva(function(p) { return p.g / 255 * 100; }, '#2ea043');
-      curva(function(p) { return p.b / 255 * 100; }, '#1a7a7a');
-      curva(function(p) { return p.brillo * 100; }, '#d4e6f0');
+      curva(function (p) { return p.r / 255 * 100; }, '#ff6b4a');
+      curva(function (p) { return p.g / 255 * 100; }, '#2ea043');
+      curva(function (p) { return p.b / 255 * 100; }, '#1a7a7a');
+      curva(function (p) { return p.brillo * 100; }, '#d4e6f0');
 
       ctx.font = '11px monospace';
       ctx.textAlign = 'left';
@@ -213,8 +213,8 @@
     <canvas id="grafica" width="800" height="500"></canvas>
   </div>
   <div id="parametros">
-<p id="tiempo">12:00</p>
-<p id="temperatura">0K</p>
+    <p id="tiempo">12:00</p>
+    <p id="temperatura">0K</p>
     <p id="rgb">r=0, g=0, b=0, i=0.0</p>
     <p><label><input type="checkbox" id="modo24h" onchange="setModo()"> Ciclo 24h completo</label></p>
   </div>
